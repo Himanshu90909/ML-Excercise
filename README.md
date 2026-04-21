@@ -11,4 +11,4 @@ Malaria Dataset:- https://colab.research.google.com/drive/1wW3r4CjoUkKf-vAMwhse5
 
 DCGAN:- https://colab.research.google.com/drive/1wrlCU7JupjmML5jmu70lgzU9exfjXKBq?usp=sharing
 
-Image Segmentation:- https://colab.research.google.com/drive/1pVEzyfOwGok7mp3Cs7_5U_TjiMvqCqGh?usp=sharing
+Image Segmentation:- https://colab.research.google.com/drive/1JfhfZEx0gesu0O__Z8_DIyUJRzb8hKfN?usp=sharing
