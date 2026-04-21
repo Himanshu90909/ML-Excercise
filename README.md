@@ -10,3 +10,5 @@ Linear_regression:- https://colab.research.google.com/drive/1aN9qSh6XE_6tnoPxYiW
 Malaria Dataset:- https://colab.research.google.com/drive/1wW3r4CjoUkKf-vAMwhse5JkHbdtQJMj8?usp=sharing
 
 DCGAN:- https://colab.research.google.com/drive/1wrlCU7JupjmML5jmu70lgzU9exfjXKBq?usp=sharing
+
+Image Segmentation:- https://colab.research.google.com/drive/1pVEzyfOwGok7mp3Cs7_5U_TjiMvqCqGh?usp=sharing
