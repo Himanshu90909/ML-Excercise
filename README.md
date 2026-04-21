@@ -6,3 +6,5 @@ Titanic-Project:- https://colab.research.google.com/drive/1NB2Scny94fFNAiZqGmGMD
 Insurance-Dataset:- https://colab.research.google.com/drive/1-boueOARPJ6Xx9O-6YNJhKYyokE86Thf?usp=sharing
 
 Linear_regression:- https://colab.research.google.com/drive/1aN9qSh6XE_6tnoPxYiWXvQUceCBOo1Z5?usp=sharing
+
+Malaria Dataset:- https://colab.research.google.com/drive/1wW3r4CjoUkKf-vAMwhse5JkHbdtQJMj8?usp=sharing
