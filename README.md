@@ -14,3 +14,5 @@ DCGAN:- https://colab.research.google.com/drive/1wrlCU7JupjmML5jmu70lgzU9exfjXKB
 Image Segmentation:- https://colab.research.google.com/drive/1JfhfZEx0gesu0O__Z8_DIyUJRzb8hKfN?usp=sharing
 
 Feature Engineering:- https://colab.research.google.com/drive/1fC7aUTXCEuu5j7h5t-pzSnNsfuDrRCIu?usp=sharing
+
+Electronic-Production:- https://colab.research.google.com/drive/1PqsOYzys5VgOG-HkQY6ETD5zn2WJpzel?usp=sharing
