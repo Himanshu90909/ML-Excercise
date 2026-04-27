@@ -21,3 +21,5 @@ Decision Tree topic:- https://colab.research.google.com/drive/1P45wRtpQ5q3QHJ9pk
 
 Linear Regression using statsmodel:- https://colab.research.google.com/drive/1YiFDEuMFkviBIf3NGNj62W9p8O5YC5uw?usp=sharing
 
+SVM(linear, non-linear):- https://colab.research.google.com/drive/1HVspDPlacA2hDrXdzqP_xILuHVcKM8cV?usp=sharing
+
