@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>House Price Predictor</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg0:   #0d1117;
+    --bg1:   #161b22;
+    --bg2:   #21262d;
+    --bg3:   #0a0d11;
+    --border:#30363d;
+    --border2:#21262d;
+    --text:  #c9d1d9;
+    --text2: #8b949e;
+    --text3: #6e7681;
+    --head:  #f0f6fc;
+    --amber: #f59e0b;
+    --indigo:#818cf8;
+    --teal:  #22d3ee;
+    --green: #34d399;
+    --red:   #f87171;
+    --purple:#c084fc;
+    --loc-downtown: #f59e0b;
+    --loc-suburbs:  #818cf8;
+    --loc-rural:    #34d399;
+    --loc-beach:    #22d3ee;
+  }
+
+  body {
+    background: var(--bg0);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* ── Layout ── */
+  .shell { max-width: 980px; margin: 0 auto; padding: 28px 20px 60px; }
+
+  /* ── Header ── */
+  .header { margin-bottom: 28px; }
+  .header-eyebrow { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); }
+  .eyebrow-text { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 2px; }
+  .header h1 { font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 700; color: var(--head); letter-spacing: -0.5px; margin-bottom: 6px; }
+  .header p { font-size: 13px; color: var(--text3); }
+
+  /* ── Metric cards ── */
+  .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 22px; }
+  .metric-card { background: var(--bg1); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+  .metric-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 6px; }
+  .metric-value { font-family: 'JetBrains Mono', monospace; font-size: 20px; color: var(--amber); font-weight: 700; }
+  .metric-sub { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+  /* ── Tabs ── */
+  .tabs { display: flex; gap: 4px; background: var(--bg1); padding: 4px; border-radius: 10px; width: fit-content; margin-bottom: 22px; }
+  .tab-btn { padding: 8px 20px; border-radius: 7px; border: none; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 12px; background: transparent; color: var(--text2); font-weight: 400; transition: all .15s; }
+  .tab-btn.active { background: var(--amber); color: var(--bg0); font-weight: 700; }
+
+  /* ── Tab panels ── */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── Cards ── */
+  .card { background: var(--bg1); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
+  .card + .card, .card + .grid2, .grid2 + .card { margin-top: 16px; }
+  .section-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 14px; font-weight: 600; }
+
+  /* ── Grid layouts ── */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .grid5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+
+  /* ── Stat rows ── */
+  .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--border2); font-size: 13px; }
+  .stat-row:last-child { border-bottom: none; }
+  .stat-key { color: var(--text2); }
+  .stat-val { font-family: 'JetBrains Mono', monospace; color: var(--amber); font-weight: 600; }
+
+  /* ── Location row ── */
+  .loc-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--border2); font-size: 13px; }
+  .loc-row:last-child { border-bottom: none; }
+  .loc-name { display: flex; align-items: center; gap: 8px; }
+  .loc-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .loc-count { font-size: 11px; color: var(--text3); }
+
+  /* ── Feature chips ── */
+  .feat-chip { background: var(--bg3); border: 1px solid var(--border2); border-radius: 8px; padding: 10px; }
+  .feat-name { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--amber); font-weight: 600; margin-bottom: 4px; word-break: break-all; }
+  .feat-desc { font-size: 10px; color: var(--text3); margin-bottom: 6px; }
+  .feat-badge { font-size: 9px; padding: 2px 6px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; }
+  .type-base       { background: #1a2a2f33; color: #22d3ee; border: 1px solid #22d3ee44; }
+  .type-normalized { background: #2f2a1a33; color: #fbbf24; border: 1px solid #fbbf2444; }
+  .type-binary     { background: #2f1a2f33; color: #c084fc; border: 1px solid #c084fc44; }
+  .type-encoded    { background: #1a1a2f33; color: #818cf8; border: 1px solid #818cf844; }
+  .type-engineered { background: #1a2f1a33; color: #34d399; border: 1px solid #34d39944; }
+
+  /* ── Table ── */
+  table { width: 100%; border-collapse: collapse; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+  th { text-align: left; padding: 8px 12px; color: var(--text2); border-bottom: 1px solid var(--border2); font-weight: 600; white-space: nowrap; font-size: 11px; }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--bg1); }
+  tr:last-child td { border-bottom: none; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; }
+
+  /* ── Charts ── */
+  .chart-wrap { position: relative; width: 100%; }
+  .chart-legend { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text2); }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* ── Predict form ── */
+  .form-section { max-width: 560px; }
+  .field { margin-bottom: 16px; }
+  label.field-label { display: block; font-size: 12px; color: var(--text2); margin-bottom: 5px; font-family: 'JetBrains Mono', monospace; }
+  label.field-label span { color: var(--amber); }
+  input[type="range"] { width: 100%; accent-color: var(--amber); cursor: pointer; }
+  .range-ticks { display: flex; justify-content: space-between; font-size: 10px; color: var(--text3); margin-top: 2px; }
+  select, input[type="number"] {
+    width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+    padding: 9px 12px; color: var(--head); font-size: 13px; font-family: 'JetBrains Mono', monospace;
+    outline: none; cursor: pointer; appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238b949e' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center;
+  }
+  .btn-predict {
+    width: 100%; background: var(--amber); color: var(--bg0); border: none; border-radius: 8px;
+    padding: 12px; font-size: 14px; font-family: 'JetBrains Mono', monospace; font-weight: 700;
+    cursor: pointer; margin-top: 20px; transition: opacity .15s;
+  }
+  .btn-predict:hover { opacity: .88; }
+
+  /* ── Result card ── */
+  .result-card { background: #0f1f0f; border: 1px solid #238636; border-radius: 10px; padding: 22px; text-align: center; margin-top: 16px; display: none; }
+  .result-card.visible { display: block; }
+  .result-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 8px; }
+  .result-price { font-family: 'JetBrains Mono', monospace; font-size: 40px; font-weight: 700; color: var(--green); letter-spacing: -1px; }
+  .result-sub { font-size: 12px; color: var(--text3); margin-top: 8px; }
+  .result-pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 16px; }
+  .result-pill { background: #0a1a0a; border: 1px solid #238636; border-radius: 8px; padding: 10px; text-align: center; }
+  .result-pill-label { font-size: 10px; color: var(--text2); margin-bottom: 4px; }
+  .result-pill-val { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--green); font-weight: 600; }
+
+  /* ── Coefficients ── */
+  .coef-row { margin-bottom: 10px; }
+  .coef-header { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; margin-bottom: 3px; }
+  .coef-name { color: var(--text2); }
+  .coef-val { font-weight: 600; }
+  .coef-track { background: var(--border2); border-radius: 4px; height: 5px; overflow: hidden; }
+  .coef-bar { height: 100%; border-radius: 4px; transition: width .4s; }
+
+  /* ── Note ── */
+  .note { font-size: 11px; color: var(--text3); margin-top: 12px; border-top: 1px solid var(--border2); padding-top: 10px; }
+
+  @media (max-width: 640px) {
+    .metrics { grid-template-columns: 1fr 1fr; }
+    .grid2 { grid-template-columns: 1fr; }
+    .grid5 { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-eyebrow">
+      <div class="dot"></div>
+      <span class="eyebrow-text">ML Project · Regression</span>
+    </div>
+    <h1>House Price Predictor</h1>
+    <p>Multiple Linear Regression · Normal Equation · 250 samples · 10 engineered features</p>
+  </div>
+
+  <!-- Metrics -->
+  <div class="metrics">
+    <div class="metric-card">
+      <div class="metric-label">Samples</div>
+      <div class="metric-value mono">250</div>
+      <div class="metric-sub">synthetic houses</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">R² Score</div>
+      <div class="metric-value mono" id="m-r2">—</div>
+      <div class="metric-sub">goodness of fit</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">MAE</div>
+      <div class="metric-value mono" id="m-mae">—</div>
+      <div class="metric-sub">mean abs. error</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">RMSE</div>
+      <div class="metric-value mono" id="m-rmse">—</div>
+      <div class="metric-sub">root mean sq. err</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="switchTab('charts')">Charts</button>
+    <button class="tab-btn" onclick="switchTab('predict')">Predict</button>
+  </div>
+
+  <!-- ═══════════════ OVERVIEW ═══════════════ -->
+  <div id="panel-overview" class="panel active">
+
+    <div class="grid2">
+      <!-- Price stats -->
+      <div class="card">
+        <div class="section-title">Price Statistics</div>
+        <div class="stat-row"><span class="stat-key">Min Price</span><span class="stat-val" id="s-min">—</span></div>
+        <div class="stat-row"><span class="stat-key">Max Price</span><span class="stat-val" id="s-max">—</span></div>
+        <div class="stat-row"><span class="stat-key">Average</span><span class="stat-val" id="s-avg">—</span></div>
+        <div class="stat-row"><span class="stat-key">Median</span><span class="stat-val" id="s-med">—</span></div>
+      </div>
+      <!-- Location breakdown -->
+      <div class="card">
+        <div class="section-title">By Location</div>
+        <div id="loc-breakdown"></div>
+      </div>
+    </div>
+
+    <!-- Feature engineering -->
+    <div class="card" style="margin-top:16px">
+      <div class="section-title">Feature Engineering — 10 Features</div>
+      <div class="grid5" id="feat-grid"></div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid var(--border2);">
+        <span class="legend-item"><span class="feat-badge type-base">base</span></span>
+        <span class="legend-item"><span class="feat-badge type-normalized">normalized</span></span>
+        <span class="legend-item"><span class="feat-badge type-binary">binary</span></span>
+        <span class="legend-item"><span class="feat-badge type-encoded">encoded</span></span>
+        <span class="legend-item"><span class="feat-badge type-engineered">engineered</span></span>
+      </div>
+    </div>
+
+    <!-- Sample data -->
+    <div class="card" style="margin-top:16px;overflow-x:auto">
+      <div class="section-title">Sample Data — First 8 Rows</div>
+      <table id="sample-table">
+        <thead>
+          <tr>
+            <th>#</th><th>Area (sqft)</th><th>Rooms</th><th>Baths</th>
+            <th>Location</th><th>Age</th><th>Garage</th><th>Price</th>
+          </tr>
+        </thead>
+        <tbody id="sample-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══════════════ CHARTS ═══════════════ -->
+  <div id="panel-charts" class="panel">
+    <!-- Scatter: price vs area -->
+    <div class="card">
+      <div class="section-title">Price vs Area — colored by location</div>
+      <div class="chart-legend" id="scatter-legend"></div>
+      <div class="chart-wrap" style="height:280px"><canvas id="chart-scatter" role="img" aria-label="Scatter plot of house price vs area colored by location"></canvas></div>
+    </div>
+
+    <div class="grid2" style="margin-top:16px">
+      <div class="card">
+        <div class="section-title">Avg Price by Location</div>
+        <div class="chart-wrap" style="height:220px"><canvas id="chart-bar" role="img" aria-label="Bar chart of average price by location"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="section-title">Price Distribution</div>
+        <div class="chart-wrap" style="height:220px"><canvas id="chart-hist" role="img" aria-label="Histogram of house price distribution"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Actual vs Predicted -->
+    <div class="card" style="margin-top:16px">
+      <div class="section-title">Actual vs Predicted — diagonal = perfect model</div>
+      <div class="chart-wrap" style="height:260px"><canvas id="chart-avp" role="img" aria-label="Scatter plot of actual vs predicted prices"></canvas></div>
+      <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:6px" id="avp-note"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ PREDICT ═══════════════ -->
+  <div id="panel-predict" class="panel">
+    <div class="form-section">
+      <div class="card">
+        <div class="section-title">Enter House Features</div>
+
+        <div class="field">
+          <label class="field-label">Area (sqft) — <span id="area-disp">2,000</span></label>
+          <input type="range" id="inp-area" min="500" max="5000" step="50" value="2000"
+            oninput="document.getElementById('area-disp').textContent=Number(this.value).toLocaleString()">
+          <div class="range-ticks"><span>500 sqft</span><span>5,000 sqft</span></div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Age (years) — <span id="age-disp">10 yrs old</span></label>
+          <input type="range" id="inp-age" min="0" max="50" step="1" value="10"
+            oninput="document.getElementById('age-disp').textContent=this.value==0?'Brand new':this.value+' yrs old'">
+          <div class="range-ticks"><span>Brand new</span><span>50 years</span></div>
+        </div>
+
+        <div class="grid2" style="gap:12px;margin-bottom:12px">
+          <div class="field" style="margin-bottom:0">
+            <label class="field-label">Bedrooms</label>
+            <select id="inp-rooms" onchange="syncBaths()">
+              <option value="1">1 bedroom</option>
+              <option value="2">2 bedrooms</option>
+              <option value="3" selected>3 bedrooms</option>
+              <option value="4">4 bedrooms</option>
+              <option value="5">5 bedrooms</option>
+              <option value="6">6 bedrooms</option>
+              <option value="7">7 bedrooms</option>
+            </select>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label class="field-label">Bathrooms</label>
+            <select id="inp-baths">
+              <option value="1">1 bathroom</option>
+              <option value="2" selected>2 bathrooms</option>
+              <option value="3">3 bathrooms</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid2" style="gap:12px">
+          <div class="field" style="margin-bottom:0">
+            <label class="field-label">Location</label>
+            <select id="inp-location">
+              <option value="Downtown">Downtown</option>
+              <option value="Suburbs" selected>Suburbs</option>
+              <option value="Rural">Rural</option>
+              <option value="Beachfront">Beachfront</option>
+            </select>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label class="field-label">Garage</label>
+            <select id="inp-garage">
+              <option value="1">Yes — has garage</option>
+              <option value="0">No garage</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn-predict" onclick="runPredict()">→ Run Prediction</button>
+      </div>
+
+      <!-- Result -->
+      <div class="result-card" id="result-card">
+        <div class="result-label">Predicted Price</div>
+        <div class="result-price" id="result-price">—</div>
+        <div class="result-sub" id="result-sub"></div>
+        <div class="result-pills">
+          <div class="result-pill"><div class="result-pill-label">Location</div><div class="result-pill-val" id="rp-loc">—</div></div>
+          <div class="result-pill"><div class="result-pill-label">Area</div><div class="result-pill-val" id="rp-area">—</div></div>
+          <div class="result-pill"><div class="result-pill-label">Config</div><div class="result-pill-val" id="rp-config">—</div></div>
+        </div>
+      </div>
+
+      <!-- Coefficients -->
+      <div class="card" style="margin-top:16px">
+        <div class="section-title">Model Coefficients (θ)</div>
+        <div id="coef-list"></div>
+        <div class="note">Positive = increases price · Negative (age) = decreases price · Beachfront adds ~$250K premium</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /shell -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════
+//  Seeded RNG
+// ═══════════════════════════════════════════════════════════
+function mulberry32(seed) {
+  let a = seed;
+  return function() {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+// ═══════════════════════════════════════════════════════════
+//  Dataset
+// ═══════════════════════════════════════════════════════════
+const LOCATIONS = ['Downtown', 'Suburbs', 'Rural', 'Beachfront'];
+const LOC_PREMIUM = { Downtown: 120000, Suburbs: 60000, Rural: 0, Beachfront: 250000 };
+const LOC_COLORS  = { Downtown: '#f59e0b', Suburbs: '#818cf8', Rural: '#34d399', Beachfront: '#22d3ee' };
+
+function generateDataset(n) {
+  const rand = mulberry32(42);
+  const rng  = (lo, hi) => lo + rand() * (hi - lo);
+  const data = [];
+  for (let i = 0; i < n; i++) {
+    const area      = Math.round(rng(500, 5000));
+    const rooms     = Math.round(rng(1, 7));
+    const bathrooms = Math.min(rooms, Math.round(rng(1, 4)));
+    const location  = LOCATIONS[Math.floor(rand() * 4)];
+    const age       = Math.round(rng(0, 50));
+    const garage    = rand() > 0.4 ? 1 : 0;
+    const noise     = (rand() - 0.5) * 60000;
+    const price     = Math.max(50000, Math.round(
+      50000 + 120 * area + 18000 * rooms + 12000 * bathrooms +
+      LOC_PREMIUM[location] - 800 * age + 25000 * garage + noise
+    ));
+    data.push({ id: i + 1, area, rooms, bathrooms, location, age, garage, price });
+  }
+  return data;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  Matrix math
+// ═══════════════════════════════════════════════════════════
+function transpose(A) {
+  return A[0].map((_, j) => A.map(r => r[j]));
+}
+function matMul(A, B) {
+  const [m, k, n] = [A.length, B.length, B[0].length];
+  return Array.from({length: m}, (_, i) =>
+    Array.from({length: n}, (_, j) =>
+      Array.from({length: k}, (_, l) => A[i][l] * B[l][j]).reduce((a,b) => a+b, 0)
+    )
+  );
+}
+function gaussianInverse(M) {
+  const n   = M.length;
+  const aug = M.map((row, i) => [...row, ...Array.from({length: n}, (_, j) => +(i === j))]);
+  for (let col = 0; col < n; col++) {
+    let maxRow = col;
+    for (let row = col + 1; row < n; row++)
+      if (Math.abs(aug[row][col]) > Math.abs(aug[maxRow][col])) maxRow = row;
+    [aug[col], aug[maxRow]] = [aug[maxRow], aug[col]];
+    const p = aug[col][col];
+    if (Math.abs(p) < 1e-12) return null;
+    for (let j = 0; j < 2*n; j++) aug[col][j] /= p;
+    for (let row = 0; row < n; row++) {
+      if (row === col) continue;
+      const f = aug[row][col];
+      for (let j = 0; j < 2*n; j++) aug[row][j] -= f * aug[col][j];
+    }
+  }
+  return aug.map(r => r.slice(n));
+}
+
+// ═══════════════════════════════════════════════════════════
+//  Feature engineering
+// ═══════════════════════════════════════════════════════════
+const FEATURE_META = [
+  { name: 'bias',         desc: 'intercept term',    type: 'base' },
+  { name: 'area / 1000',  desc: 'normalized sqft',   type: 'normalized' },
+  { name: 'rooms',        desc: 'num bedrooms',      type: 'base' },
+  { name: 'bathrooms',    desc: 'num bathrooms',     type: 'base' },
+  { name: 'age / 10',     desc: 'normalized age',    type: 'normalized' },
+  { name: 'garage',       desc: 'binary indicator',  type: 'binary' },
+  { name: 'isDowntown',   desc: 'one-hot encoding',  type: 'encoded' },
+  { name: 'isSuburbs',    desc: 'one-hot encoding',  type: 'encoded' },
+  { name: 'isBeachfront', desc: 'one-hot encoding',  type: 'encoded' },
+  { name: 'area × rooms', desc: 'interaction term',  type: 'engineered' },
+];
+
+function featurize(row) {
+  return [
+    1,
+    row.area / 1000,
+    row.rooms,
+    row.bathrooms,
+    row.age / 10,
+    row.garage,
+    row.location === 'Downtown'   ? 1 : 0,
+    row.location === 'Suburbs'    ? 1 : 0,
+    row.location === 'Beachfront' ? 1 : 0,
+    (row.area * row.rooms) / 10000,
+  ];
+}
+
+// ═══════════════════════════════════════════════════════════
+//  Train model (Normal Equation)
+// ═══════════════════════════════════════════════════════════
+const SCALE = 1e5;
+
+function trainModel(data) {
+  const X  = data.map(featurize);
+  const y  = data.map(d => [d.price / SCALE]);
+  const Xt = transpose(X);
+  const inv = gaussianInverse(matMul(Xt, X));
+  if (!inv) return null;
+  const theta = matMul(matMul(inv, Xt), y).map(r => r[0]);
+
+  const preds  = X.map(row => row.reduce((s, xi, i) => s + xi * theta[i], 0) * SCALE);
+  const actual = data.map(d => d.price);
+  const mean   = actual.reduce((s, v) => s + v, 0) / actual.length;
+  const ssTot  = actual.reduce((s, v)    => s + (v - mean) ** 2, 0);
+  const ssRes  = actual.reduce((s, v, i) => s + (v - preds[i]) ** 2, 0);
+  const r2     = 1 - ssRes / ssTot;
+  const mae    = actual.reduce((s, v, i) => s + Math.abs(v - preds[i]), 0) / actual.length;
+  const rmse   = Math.sqrt(actual.reduce((s, v, i) => s + (v - preds[i]) ** 2, 0) / actual.length);
+  return { theta, r2, mae, rmse, preds };
+}
+
+function predictPrice(theta, row) {
+  return Math.max(0, featurize(row).reduce((s, xi, i) => s + xi * theta[i], 0) * SCALE);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  Formatting
+// ═══════════════════════════════════════════════════════════
+const fmt  = v => `$${(v / 1000).toFixed(0)}K`;
+const fmtF = v => `$${Math.round(v).toLocaleString()}`;
+const pct  = v => `${(v * 100).toFixed(1)}%`;
+
+// ═══════════════════════════════════════════════════════════
+//  Render helpers
+// ═══════════════════════════════════════════════════════════
+function renderOverview(data, model) {
+  const prices  = data.map(d => d.price).sort((a, b) => a - b);
+  const avgP    = Math.round(prices.reduce((s, v) => s + v, 0) / prices.length);
+  const med     = prices[Math.floor(prices.length / 2)];
+
+  document.getElementById('s-min').textContent = fmtF(prices[0]);
+  document.getElementById('s-max').textContent = fmtF(prices[prices.length - 1]);
+  document.getElementById('s-avg').textContent = fmtF(avgP);
+  document.getElementById('s-med').textContent = fmtF(med);
+
+  // Location breakdown
+  const locDiv = document.getElementById('loc-breakdown');
+  LOCATIONS.forEach(loc => {
+    const h    = data.filter(d => d.location === loc);
+    const avg  = Math.round(h.reduce((s, d) => s + d.price, 0) / h.length);
+    const col  = LOC_COLORS[loc];
+    locDiv.innerHTML += `
+      <div class="loc-row">
+        <div class="loc-name">
+          <div class="loc-dot" style="background:${col}"></div>
+          <span>${loc}</span>
+          <span class="loc-count">(${h.length})</span>
+        </div>
+        <span class="stat-val" style="color:${col}">${fmt(avg)}</span>
+      </div>`;
+  });
+
+  // Feature chips
+  const featGrid = document.getElementById('feat-grid');
+  FEATURE_META.forEach(f => {
+    featGrid.innerHTML += `
+      <div class="feat-chip">
+        <div class="feat-name">${f.name}</div>
+        <div class="feat-desc">${f.desc}</div>
+        <span class="feat-badge type-${f.type}">${f.type}</span>
+      </div>`;
+  });
+
+  // Sample table
+  const tbody = document.getElementById('sample-tbody');
+  data.slice(0, 8).forEach(d => {
+    const col = LOC_COLORS[d.location];
+    tbody.innerHTML += `
+      <tr>
+        <td style="color:var(--text3)">${d.id}</td>
+        <td>${d.area.toLocaleString()}</td>
+        <td>${d.rooms}</td>
+        <td>${d.bathrooms}</td>
+        <td><span class="badge" style="background:${col}22;color:${col};border:1px solid ${col}44">${d.location}</span></td>
+        <td>${d.age} yr</td>
+        <td style="color:${d.garage ? 'var(--green)' : 'var(--text3)'}">${d.garage ? 'Yes' : 'No'}</td>
+        <td style="color:var(--amber);font-weight:600">${fmtF(d.price)}</td>
+      </tr>`;
+  });
+}
+
+function renderMetrics(model) {
+  document.getElementById('m-r2').textContent   = pct(model.r2);
+  document.getElementById('m-mae').textContent  = fmt(model.mae);
+  document.getElementById('m-rmse').textContent = fmt(model.rmse);
+}
+
+function renderCoefficients(model) {
+  const list   = document.getElementById('coef-list');
+  const maxAbs = 200000;
+  FEATURE_META.forEach((f, i) => {
+    const scaled = model.theta[i] * SCALE;
+    const barW   = Math.min(100, (Math.abs(scaled) / maxAbs) * 100).toFixed(1);
+    const isPos  = scaled >= 0;
+    const col    = isPos ? 'var(--green)' : 'var(--red)';
+    list.innerHTML += `
+      <div class="coef-row">
+        <div class="coef-header">
+          <span class="coef-name">${f.name}</span>
+          <span class="coef-val" style="color:${col}">${isPos ? '+' : ''}${fmtF(scaled)}</span>
+        </div>
+        <div class="coef-track">
+          <div class="coef-bar" style="width:${barW}%;background:${col}"></div>
+        </div>
+      </div>`;
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+//  Charts
+// ═══════════════════════════════════════════════════════════
+function renderCharts(data, model) {
+  // Legend for scatter
+  const legend = document.getElementById('scatter-legend');
+  LOCATIONS.forEach(loc => {
+    legend.innerHTML += `
+      <div class="legend-item">
+        <div class="legend-dot" style="background:${LOC_COLORS[loc]}"></div>
+        ${loc}
+      </div>`;
+  });
+
+  // Scatter: Price vs Area
+  const scatterDatasets = LOCATIONS.map(loc => ({
+    label: loc,
+    data: data.filter(d => d.location === loc).map(d => ({ x: d.area, y: d.price })),
+    backgroundColor: LOC_COLORS[loc] + 'bb',
+    pointRadius: 4,
+    pointHoverRadius: 6,
+  }));
+  new Chart(document.getElementById('chart-scatter'), {
+    type: 'scatter',
+    data: { datasets: scatterDatasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => [`Area: ${ctx.raw.x.toLocaleString()} sqft`, `Price: ${fmtF(ctx.raw.y)}`]
+          }
+        }
+      },
+      scales: {
+        x: { title: { display: true, text: 'Area (sqft)', color: '#8b949e', font: { size: 11 } }, ticks: { color: '#8b949e', font: { size: 10 } }, grid: { color: '#21262d' } },
+        y: { title: { display: true, text: 'Price', color: '#8b949e', font: { size: 11 } }, ticks: { color: '#8b949e', font: { size: 10 }, callback: v => fmt(v) }, grid: { color: '#21262d' } },
+      }
+    }
+  });
+
+  // Bar: Avg price by location
+  const locStats = LOCATIONS.map(loc => {
+    const h = data.filter(d => d.location === loc);
+    return { loc, avg: Math.round(h.reduce((s, d) => s + d.price, 0) / h.length) };
+  });
+  new Chart(document.getElementById('chart-bar'), {
+    type: 'bar',
+    data: {
+      labels: locStats.map(l => l.loc),
+      datasets: [{
+        data: locStats.map(l => l.avg),
+        backgroundColor: LOCATIONS.map(l => LOC_COLORS[l] + 'cc'),
+        borderColor:     LOCATIONS.map(l => LOC_COLORS[l]),
+        borderWidth: 1,
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => fmt(ctx.raw) } } },
+      scales: {
+        x: { ticks: { color: '#8b949e', font: { size: 10 } }, grid: { display: false } },
+        y: { ticks: { color: '#8b949e', font: { size: 10 }, callback: v => fmt(v) }, grid: { color: '#21262d' } }
+      }
+    }
+  });
+
+  // Histogram
+  const prices   = data.map(d => d.price);
+  const minP     = Math.min(...prices), maxP = Math.max(...prices);
+  const binCount = 12, binW = (maxP - minP) / binCount;
+  const bins     = Array.from({length: binCount}, (_, i) => {
+    const lo = minP + i * binW, hi = lo + binW;
+    return { label: `${(lo/1000).toFixed(0)}K`, count: prices.filter(p => p >= lo && (i === binCount-1 ? p <= hi : p < hi)).length };
+  });
+  new Chart(document.getElementById('chart-hist'), {
+    type: 'bar',
+    data: {
+      labels: bins.map(b => b.label),
+      datasets: [{
+        data: bins.map(b => b.count),
+        backgroundColor: '#f59e0bcc',
+        borderColor: '#f59e0b',
+        borderWidth: 1,
+        borderRadius: 3,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#8b949e', font: { size: 9 }, maxRotation: 45, autoSkip: false }, grid: { display: false } },
+        y: { ticks: { color: '#8b949e', font: { size: 10 } }, grid: { color: '#21262d' } }
+      }
+    }
+  });
+
+  // Actual vs Predicted
+  const avpData = data.map((d, i) => ({ x: d.price, y: Math.round(model.preds[i]) }));
+  new Chart(document.getElementById('chart-avp'), {
+    type: 'scatter',
+    data: {
+      datasets: [{
+        label: 'Predicted',
+        data: avpData,
+        backgroundColor: '#818cf8aa',
+        pointRadius: 3,
+        pointHoverRadius: 5,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => [`Actual: ${fmtF(ctx.raw.x)}`, `Predicted: ${fmtF(ctx.raw.y)}`, `Error: ${fmtF(Math.abs(ctx.raw.x - ctx.raw.y))}`] } }
+      },
+      scales: {
+        x: { title: { display: true, text: 'Actual Price', color: '#8b949e', font: { size: 11 } }, ticks: { color: '#8b949e', font: { size: 10 }, callback: v => fmt(v) }, grid: { color: '#21262d' } },
+        y: { title: { display: true, text: 'Predicted Price', color: '#8b949e', font: { size: 11 } }, ticks: { color: '#8b949e', font: { size: 10 }, callback: v => fmt(v) }, grid: { color: '#21262d' } }
+      }
+    }
+  });
+
+  document.getElementById('avp-note').textContent =
+    `R² = ${pct(model.r2)} · Points clustering near the diagonal indicate accurate predictions`;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  Predict
+// ═══════════════════════════════════════════════════════════
+let MODEL = null;
+
+function runPredict() {
+  if (!MODEL) return;
+  const row = {
+    area:      +document.getElementById('inp-area').value,
+    rooms:     +document.getElementById('inp-rooms').value,
+    bathrooms: +document.getElementById('inp-baths').value,
+    location:   document.getElementById('inp-location').value,
+    age:       +document.getElementById('inp-age').value,
+    garage:    +document.getElementById('inp-garage').value,
+  };
+  const price = predictPrice(MODEL.theta, row);
+  document.getElementById('result-price').textContent = fmtF(price);
+  document.getElementById('result-sub').textContent   =
+    `±${fmt(MODEL.mae)} typical error (MAE) · R² = ${pct(MODEL.r2)}`;
+  document.getElementById('rp-loc').textContent    = row.location;
+  document.getElementById('rp-area').textContent   = `${row.area.toLocaleString()} sqft`;
+  document.getElementById('rp-config').textContent = `${row.rooms}bd / ${row.bathrooms}ba`;
+  document.getElementById('result-card').classList.add('visible');
+}
+
+function syncBaths() {
+  const rooms = +document.getElementById('inp-rooms').value;
+  const baths = document.getElementById('inp-baths');
+  const cur   = +baths.value;
+  baths.innerHTML = [1,2,3,4].filter(n => n <= rooms)
+    .map(n => `<option value="${n}"${Math.min(cur,rooms)===n?' selected':''}>${n} bathroom${n>1?'s':''}</option>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  Tab switching
+// ═══════════════════════════════════════════════════════════
+function switchTab(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    if (b.textContent.trim().toLowerCase() === name) b.classList.add('active');
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+//  Boot
+// ═══════════════════════════════════════════════════════════
+(function init() {
+  const data = generateDataset(250);
+  MODEL      = trainModel(data);
+  if (!MODEL) { console.error('Model training failed'); return; }
+
+  renderMetrics(MODEL);
+  renderOverview(data, MODEL);
+  renderCharts(data, MODEL);
+  renderCoefficients(MODEL);
+})();
+</script>
+</body>
+</html>
