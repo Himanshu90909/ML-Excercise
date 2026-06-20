@@ -33,3 +33,6 @@ Efficiently finds optimal model parameters, especially for large datasets and hi
 <img width="800" height="400" alt="image" src="https://github.com/user-attachments/assets/0ab9616f-e45a-48a7-8332-9a8b6e9bffdc" />
 
 colab link:- https://colab.research.google.com/drive/103YIdJ9SK6lcfRXM1tjRSPiJPvHFWIQ4?usp=sharing
+
+
+Logistic_regression by Scikit Learn:- https://colab.research.google.com/drive/12cQnzZs7D7Cxr1HvefgVpNs6YeMIrrXg?usp=sharing
