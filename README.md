@@ -24,3 +24,12 @@ Linear Regression using statsmodel:- https://colab.research.google.com/drive/1Yi
 SVM(linear, non-linear):- https://colab.research.google.com/drive/1HVspDPlacA2hDrXdzqP_xILuHVcKM8cV?usp=sharing
 
 Linear_Regression_multiple :- https://colab.research.google.com/drive/1B20W6MqiWnUkVKh26ZTyzLD7-uDIwZ8A?usp=sharing
+
+Gradient Descent in Linear Regression:-
+Gradient Descent is an optimization algorithm used in linear regression to find the best-fit line by minimizing prediction error. It works by repeatedly adjusting the model parameters based on the direction of the steepest decrease in the cost function. This iterative approach helps the model converge toward the optimal solution.
+
+Reduces prediction error by minimizing the cost function, typically Mean Squared Error (MSE).
+Efficiently finds optimal model parameters, especially for large datasets and high-dimensional data.
+<img width="800" height="400" alt="image" src="https://github.com/user-attachments/assets/0ab9616f-e45a-48a7-8332-9a8b6e9bffdc" />
+
+colab link:- https://colab.research.google.com/drive/103YIdJ9SK6lcfRXM1tjRSPiJPvHFWIQ4?usp=sharing
