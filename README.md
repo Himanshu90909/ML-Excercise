@@ -23,3 +23,4 @@ Linear Regression using statsmodel:- https://colab.research.google.com/drive/1Yi
 
 SVM(linear, non-linear):- https://colab.research.google.com/drive/1HVspDPlacA2hDrXdzqP_xILuHVcKM8cV?usp=sharing
 
+Linear_Regression_multiple :- https://colab.research.google.com/drive/1B20W6MqiWnUkVKh26ZTyzLD7-uDIwZ8A?usp=sharing
