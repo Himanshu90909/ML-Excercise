@@ -36,3 +36,45 @@ colab link:- https://colab.research.google.com/drive/103YIdJ9SK6lcfRXM1tjRSPiJPv
 
 
 Logistic_regression by Scikit Learn:- https://colab.research.google.com/drive/12cQnzZs7D7Cxr1HvefgVpNs6YeMIrrXg?usp=sharing
+
+## Detecting Multicollinearity with VIF - Python
+
+Multicollinearity occurs when two or more independent variables are highly correlated which leads to unstable coefficient estimates and reduces model reliability. This makes it difficult to identify the individual effect of each predictor on the dependent variable. The Variance Inflation Factor (VIF) is used to detect multicollinearity in regression analysis. In this article, we’ll see VIF and how to use it in Python to identify multicollinearity.
+<img width="800" height="400" alt="image" src="https://github.com/user-attachments/assets/00f0f2dc-9ca4-4fbd-b484-218b64bf8651" />
+
+detecting_multicollinearity_using_vif
+Detecting Multicollinearity with VIF
+Mathematics behind Variance Inflation Factor (VIF)
+VIF shows how much the variance of a regression coefficient increases due to multicollinearity. For each variable, we run a regression where that variable becomes the dependent variable and the remaining variables act as predictors. This gives an R-squared(
+R 
+2
+ ) value that tells how well one variable can be predicted using the others.
+
+Formula for VIF is:
+
+VIF= 
+1−R 
+2
+ 
+1
+​
+ 
+
+R² ranges from 0 to 1.
+A higher R² means the variable is highly predictable from other variables -> higher VIF.
+If R² is close to 1, the variable is almost fully explained by others -> strong multicollinearity.
+Since VIF increases as R² increases, a higher VIF indicates higher multicollinearity. In practice:
+
+VIF > 5 -> noticeable multicollinearity
+VIF > 10 -> severe multicollinearity (action needed)
+Understanding this formula helps us correctly spot multicollinearity and decide if we should remove or combine variables.
+
+VIF Interpretation
+VIF ≈ 1: No correlation with other predictors
+1 < VIF ≤ 5: Mild to moderate correlation (usually fine)
+VIF > 10: Strong multicollinearity -> take corrective steps
+Multicollinearity Detection using VIF in Python
+To detect multicollinearity in regression analysis we can implement the Variance Inflation Factor (VIF) using the statsmodels library. This function calculates the VIF value for each feature in the dataset helping us identify multicollinearity.
+
+vif:- https://colab.research.google.com/drive/1mIr577jdmCuwGGKm3JxlNNWyXCXi7dmZ?usp=sharing
+
