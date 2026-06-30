@@ -78,3 +78,8 @@ To detect multicollinearity in regression analysis we can implement the Variance
 
 vif:- https://colab.research.google.com/drive/1mIr577jdmCuwGGKm3JxlNNWyXCXi7dmZ?usp=sharing
 
+Non-Linear SVM - ML:- https://colab.research.google.com/drive/1SaixpItWs8GvUVleLN2HJw_RDD9Bii0B?usp=sharing
+
+Implementing Decision Tree Classifiers with Scikit:-https://colab.research.google.com/drive/1yGblSmc5aarpoeQhCjn9XpYvqKGdMxxJ?usp=sharing
+
+ML - Heart Disease Prediction Using Logistic Regression  comments:- https://colab.research.google.com/drive/1GBpMl-fU0sbVtPiEtNP92ERpHInXcT6A?usp=sharing
