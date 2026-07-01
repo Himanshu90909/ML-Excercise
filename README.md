@@ -83,3 +83,17 @@ Non-Linear SVM - ML:- https://colab.research.google.com/drive/1SaixpItWs8GvUVleL
 Implementing Decision Tree Classifiers with Scikit:-https://colab.research.google.com/drive/1yGblSmc5aarpoeQhCjn9XpYvqKGdMxxJ?usp=sharing
 
 ML - Heart Disease Prediction Using Logistic Regression  comments:- https://colab.research.google.com/drive/1GBpMl-fU0sbVtPiEtNP92ERpHInXcT6A?usp=sharing
+
+## **Gaussian Naive Bayes**
+
+comments
+Gaussian Naive Bayes is a type of Naive Bayes method working on continuous attributes and the data features that follows Gaussian distribution throughout the dataset. This “naive” assumption simplifies calculations and makes the model fast and efficient.
+
+It is widely used because it performs well even with small datasets and is easy to implement and interpret.
+Works well with continuous numerical features
+Fast, simple, and effective for classification problems
+Commonly used in spam detection, medical diagnosis, and pattern recognition
+
+GaussianNB:- https://colab.research.google.com/drive/1xuGHJ1Hr-F2sO1YBSzSktffuSd1ke5G6?usp=sharing
+
+<img width="800" height="400" alt="image" src="https://github.com/user-attachments/assets/3e6878f9-7301-4a50-aa93-a6980b7ed776" />
