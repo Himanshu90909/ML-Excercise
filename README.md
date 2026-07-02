@@ -96,4 +96,47 @@ Commonly used in spam detection, medical diagnosis, and pattern recognition
 
 GaussianNB:- https://colab.research.google.com/drive/1xuGHJ1Hr-F2sO1YBSzSktffuSd1ke5G6?usp=sharing
 
+## A decision boundary is a line or surface that divides different groups in a classification task. It shows which areas belong to which class based on what the model decides. K-Nearest Neighbours (KNN) algorithm operates on the principle that similar data points exist in close proximity within a feature space.
+
+420046938
+Decision Boundaries in KNN
+The shape of this boundary depends on:
+
+The value of K (how many neighbours are considered).
+How the data points are spread out in space.
+For example, given a dataset with two classes the decision boundary can be visualized as the line or curve dividing the two regions where each class is predicted. For a 1-nearest neighbour (1-NN) classifier the decision boundary can be visualized using a Voronoi diagram.
+
+Using Voronoi Diagrams to Visualize
+A Voronoi diagram splits space into regions based on which training point is closest.
+Each region called a Voronoi cell contains all the points closest to one specific training point.
+The lines between regions are where points are equally close to two or more seeds. These are the decision boundaries for 1-Nearest Neighbour which is very irregular in shape.
+If we label the training points by class the Voronoi diagram shows how KNN assigns a new point based on which region it falls into.
+The boundary line between two points 
+p 
+i
+​
+  and 
+p 
+j
+​
+ is the perpendicular bisector of the line joining them meaning it’s a line that cuts the segment between them exactly in half at a right angle.
+knn-decision-boundafries
+Formation of Decision Boundaries
+Relationship between KNN and Voronoi
+In two-dimensional space the decision boundaries of KNN can be visualized as Voronoi diagrams. Here’s how:
+
+KNN Boundaries: The decision boundary for KNN is determined by regions where the classification changes based on the nearest neighbors. As k increases, the decision boundary becomes smoother and less sensitive to local variations, and for very large k, the model may predict the majority class for most regions.
+Voronoi Diagram as a Special Case: When k = 1 KNN’s decision boundaries directly correspond to the Voronoi diagram of the training points. Each region in the Voronoi diagram represents the area where the nearest training point is closest.
+How KNN Defines Decision Boundaries
+In KNN, decision boundaries are influenced by the choice of k and the distance metric used:
+
+1. Impact of 'K' on Decision Boundaries: The number of neighbors (k) affects the shape and smoothness of the decision boundary.
+
+Small k: When k is small the decision boundary can become very complex, closely following the training data. This can lead to overfitting.
+Large k: When k is large the decision boundary smooths out and becomes less sensitive to individual data points, potentially leading to underfitting.
+2. Distance Metric: The decision boundary is also affected by the distance metric used like Euclidean, Manhattan. Different metrics can lead to different boundary shapes.
+
+Euclidean Distance: Commonly used leading to circular or elliptical decision boundaries in two-dimensional space.
+Manhattan Distance: Results in axis-aligned decision boundaries.
+
 <img width="800" height="400" alt="image" src="https://github.com/user-attachments/assets/3e6878f9-7301-4a50-aa93-a6980b7ed776" />
